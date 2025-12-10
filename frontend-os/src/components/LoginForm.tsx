@@ -1,5 +1,6 @@
 import { useState, FormEvent, ChangeEvent } from 'react'
 import { useThemeStore } from '../store/themeStore'
+import { useAuthStore } from '../store/authStore'
 import { themes } from '../types/theme'
 
 /**
@@ -9,6 +10,7 @@ import { themes } from '../types/theme'
 function LoginForm(): JSX.Element {
   const [name, setName] = useState<string>('')
   const { theme } = useThemeStore()
+  const { login } = useAuthStore()
   const themeConfig = themes[theme]
 
   /**
@@ -26,7 +28,7 @@ function LoginForm(): JSX.Element {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
     if (name.trim() !== '') {
-      console.log('Usuario ingresado:', name.trim())
+      login(name.trim())
     }
   }
 

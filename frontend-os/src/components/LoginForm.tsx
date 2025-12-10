@@ -1,4 +1,6 @@
 import { useState, FormEvent, ChangeEvent } from 'react'
+import { useThemeStore } from '../store/themeStore'
+import { themes } from '../types/theme'
 
 /**
  * Componente de formulario de ingreso al sistema operativo
@@ -6,6 +8,8 @@ import { useState, FormEvent, ChangeEvent } from 'react'
  */
 function LoginForm(): JSX.Element {
   const [name, setName] = useState<string>('')
+  const { theme } = useThemeStore()
+  const themeConfig = themes[theme]
 
   /**
    * Maneja el cambio en el input del nombre
@@ -28,8 +32,19 @@ function LoginForm(): JSX.Element {
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
-      <div className="w-full max-w-md bg-[#e5e8ea] border border-gray-400/30 rounded-2xl p-10 shadow-xl">
-        <p className="text-gray-700 text-sm font-light mb-6 text-center">
+      <div
+        className="w-full max-w-md bg-transparent border rounded-2xl p-10"
+        style={{
+          borderColor: themeConfig.border,
+        }}
+      >
+        <p
+          className="text-sm font-light mb-6 text-center"
+          style={{
+            color: themeConfig.text,
+            opacity: 0.8,
+          }}
+        >
           Bienvenido, por favor introduce tu nombre para acceder
         </p>
         <form
@@ -43,14 +58,28 @@ function LoginForm(): JSX.Element {
               value={name}
               onChange={handleNameChange}
               placeholder="Nombre"
-              className="w-full px-3 py-2 bg-white/60 border border-gray-400/20 rounded-md text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-gray-500/40 focus:bg-white/80 transition-all duration-200 font-light"
+              className="w-full px-3 py-2 bg-transparent border rounded-md text-sm placeholder:opacity-50 focus:outline-none transition-all duration-200 font-light"
+              style={{
+                borderColor: themeConfig.inputBorder,
+                color: themeConfig.inputText,
+              }}
               autoFocus
             />
           </div>
           <button
             type="submit"
             disabled={name.trim() === ''}
-            className="w-full px-4 py-2 bg-gray-800/80 text-white rounded-md text-xs font-normal tracking-wide uppercase disabled:opacity-25 disabled:cursor-not-allowed hover:bg-gray-800 transition-all duration-200"
+            className="w-full px-4 py-2 bg-transparent border rounded-md text-xs font-normal tracking-wide uppercase disabled:opacity-25 disabled:cursor-not-allowed hover:opacity-80 transition-all duration-200"
+            style={{
+              borderColor: themeConfig.buttonBorder,
+              color: themeConfig.buttonText,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+            }}
           >
             Ingresar
           </button>

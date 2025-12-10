@@ -2,6 +2,7 @@ import { useThemeStore } from '../store/themeStore'
 import { useAuthStore } from '../store/authStore'
 import { themes } from '../types/theme'
 import Taskbar from './Taskbar'
+import DesktopIcon from './DesktopIcon'
 
 /**
  * Componente escritorio tipo Windows
@@ -11,6 +12,13 @@ function LinuxDesktop(): JSX.Element {
   const { theme } = useThemeStore()
   const { userName } = useAuthStore()
   const themeConfig = themes[theme]
+
+  /**
+   * Maneja el clic en el icono de Contacto
+   */
+  const handleContactClick = (): void => {
+    console.log('Contacto clicked')
+  }
 
   return (
     <div className="min-h-screen pb-12">
@@ -27,12 +35,9 @@ function LinuxDesktop(): JSX.Element {
           >
             Bienvenido, {userName}
           </h1>
-          <p
-            className="text-xs mt-1"
-            style={{ color: themeConfig.text, opacity: 0.6 }}
-          >
-            Sistema operativo personal
-          </p>
+        </div>
+        <div className="flex flex-wrap gap-6">
+          <DesktopIcon title="Contacto" onClick={handleContactClick} />
         </div>
       </div>
       <Taskbar />

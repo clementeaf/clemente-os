@@ -44,11 +44,9 @@ function Taskbar(): JSX.Element {
         <div className="relative">
           <button
             onClick={toggleStartMenu}
-            className="px-4 py-2 text-xs font-light border rounded-md transition-all duration-200"
+            className="px-4 py-2 text-xs font-light transition-all duration-200"
             style={{
-              borderColor: isStartMenuOpen
-                ? themeConfig.border
-                : `${themeConfig.border}60`,
+              border: 'none',
               color: themeConfig.text,
               backgroundColor: isStartMenuOpen
                 ? `${themeConfig.border}20`

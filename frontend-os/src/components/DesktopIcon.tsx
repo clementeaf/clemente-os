@@ -4,6 +4,7 @@ import { themes } from '../types/theme'
 interface DesktopIconProps {
   title: string
   onClick?: () => void
+  iconType?: 'app' | 'folder'
 }
 
 /**
@@ -12,7 +13,11 @@ interface DesktopIconProps {
  * @param onClick - Función a ejecutar al hacer clic
  * @returns Icono de aplicación tipo Windows
  */
-function DesktopIcon({ title, onClick }: DesktopIconProps): JSX.Element {
+function DesktopIcon({
+  title,
+  onClick,
+  iconType = 'app',
+}: DesktopIconProps): JSX.Element {
   const { theme } = useThemeStore()
   const themeConfig = themes[theme]
 
@@ -42,13 +47,23 @@ function DesktopIcon({ title, onClick }: DesktopIconProps): JSX.Element {
               : 'rgba(0, 0, 0, 0.05)',
         }}
       >
-        <div
-          className="w-6 h-6 border rounded-sm"
-          style={{
-            borderColor: themeConfig.border,
-            opacity: 0.6,
-          }}
-        />
+        {iconType === 'folder' ? (
+          <div
+            className="w-7 h-6 border rounded-sm"
+            style={{
+              borderColor: themeConfig.border,
+              opacity: 0.6,
+            }}
+          />
+        ) : (
+          <div
+            className="w-6 h-6 border rounded-sm"
+            style={{
+              borderColor: themeConfig.border,
+              opacity: 0.6,
+            }}
+          />
+        )}
       </div>
       <span className="text-xs font-light" style={{ color: themeConfig.text }}>
         {title}

@@ -1,8 +1,11 @@
 import { useThemeStore } from '../store/themeStore'
 import { useAuthStore } from '../store/authStore'
+import { useWindowStore } from '../store/windowStore'
 import { themes } from '../types/theme'
 import Taskbar from './Taskbar'
 import DesktopIcon from './DesktopIcon'
+import WindowComponent from './Window'
+import FileExplorer from './FileExplorer'
 
 /**
  * Componente escritorio tipo Windows
@@ -11,6 +14,7 @@ import DesktopIcon from './DesktopIcon'
 function LinuxDesktop(): JSX.Element {
   const { theme } = useThemeStore()
   const { userName } = useAuthStore()
+  const { openWindow, windows } = useWindowStore()
   const themeConfig = themes[theme]
 
   /**
@@ -18,6 +22,16 @@ function LinuxDesktop(): JSX.Element {
    */
   const handleContactClick = (): void => {
     console.log('Contacto clicked')
+  }
+
+  /**
+   * Maneja el clic en el icono de Portafolio
+   */
+  const handlePortfolioClick = (): void => {
+    openWindow({
+      title: 'Portafolio',
+      type: 'file-explorer',
+    })
   }
 
   return (
@@ -38,8 +52,18 @@ function LinuxDesktop(): JSX.Element {
         </div>
         <div className="flex flex-wrap gap-6">
           <DesktopIcon title="Contacto" onClick={handleContactClick} />
+          <DesktopIcon
+            title="Portafolio"
+            onClick={handlePortfolioClick}
+            iconType="folder"
+          />
         </div>
       </div>
+      {windows.map((window) => (
+        <WindowComponent key={window.id} window={window}>
+          {window.type === 'file-explorer' && <FileExplorer />}
+        </WindowComponent>
+      ))}
       <Taskbar />
     </div>
   )

@@ -19,6 +19,7 @@ interface WindowState {
   minimizeWindow: (id: string) => void
   maximizeWindow: (id: string) => void
   focusWindow: (id: string) => void
+  restoreWindow: (id: string) => void
   updateWindowPosition: (id: string, position: { x: number; y: number }) => void
   updateWindowSize: (id: string, size: { width: number; height: number }) => void
 }
@@ -65,6 +66,15 @@ export const useWindowStore = create<WindowState>((set) => ({
     set((state) => ({
       windows: state.windows.map((w) =>
         w.id === id ? { ...w, zIndex: state.nextZIndex } : w
+      ),
+      nextZIndex: state.nextZIndex + 1,
+    })),
+  restoreWindow: (id) =>
+    set((state) => ({
+      windows: state.windows.map((w) =>
+        w.id === id
+          ? { ...w, isMinimized: false, zIndex: state.nextZIndex }
+          : w
       ),
       nextZIndex: state.nextZIndex + 1,
     })),

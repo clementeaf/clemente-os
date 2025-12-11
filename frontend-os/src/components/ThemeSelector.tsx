@@ -22,6 +22,7 @@ function ThemeSelector(): JSX.Element {
       className="absolute top-4 right-4 px-3 py-1 text-xs font-light border rounded-md transition-all duration-200"
       style={{
         borderColor: currentTheme.border,
+        outline: 'none',
         color: currentTheme.text,
         backgroundColor: 'transparent',
       }}

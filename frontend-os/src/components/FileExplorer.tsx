@@ -28,6 +28,7 @@ function FileExplorer(): JSX.Element {
           className="px-2 py-1 text-xs font-light transition-all duration-200"
           style={{
             border: 'none',
+            outline: 'none',
             backgroundColor: 'transparent',
             color: themeConfig.text,
             opacity: 0.6,
@@ -45,6 +46,7 @@ function FileExplorer(): JSX.Element {
           className="px-2 py-1 text-xs font-light transition-all duration-200"
           style={{
             border: 'none',
+            outline: 'none',
             backgroundColor: 'transparent',
             color: themeConfig.text,
             opacity: 0.6,

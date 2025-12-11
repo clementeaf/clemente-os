@@ -74,6 +74,7 @@ function LoginForm(): JSX.Element {
             className="w-full px-4 py-2 bg-transparent border rounded-md text-xs font-normal tracking-wide uppercase disabled:opacity-25 disabled:cursor-not-allowed hover:opacity-80 transition-all duration-200"
             style={{
               borderColor: themeConfig.buttonBorder,
+              outline: 'none',
               color: themeConfig.buttonText,
             }}
             onMouseEnter={(e) => {

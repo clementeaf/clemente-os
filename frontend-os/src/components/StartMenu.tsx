@@ -43,6 +43,7 @@ function StartMenu({ onClose, onLogout }: StartMenuProps): JSX.Element {
           className="text-left px-3 py-2 text-sm font-light border rounded-md transition-all duration-200"
           style={{
             borderColor: 'transparent',
+            outline: 'none',
             color: themeConfig.text,
             backgroundColor: 'transparent',
           }}
@@ -66,6 +67,7 @@ function StartMenu({ onClose, onLogout }: StartMenuProps): JSX.Element {
           className="text-left px-3 py-2 text-sm font-light border rounded-md transition-all duration-200"
           style={{
             borderColor: 'transparent',
+            outline: 'none',
             color: themeConfig.text,
             backgroundColor: 'transparent',
           }}

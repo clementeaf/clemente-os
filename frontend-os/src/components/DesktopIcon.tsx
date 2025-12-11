@@ -27,6 +27,7 @@ function DesktopIcon({
       className="flex flex-col items-center gap-2 p-3 transition-all duration-200"
       style={{
         border: 'none',
+        outline: 'none',
         backgroundColor: 'transparent',
         color: themeConfig.text,
       }}

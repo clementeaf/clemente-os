@@ -205,6 +205,7 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
             className="w-4 h-4 text-xs font-light transition-all duration-200"
             style={{
               border: 'none',
+              outline: 'none',
               backgroundColor: 'transparent',
               color: themeConfig.text,
             }}
@@ -222,6 +223,7 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
             className="w-4 h-4 text-xs font-light transition-all duration-200"
             style={{
               border: 'none',
+              outline: 'none',
               backgroundColor: 'transparent',
               color: themeConfig.text,
             }}
@@ -239,6 +241,7 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
             className="w-4 h-4 text-xs font-light transition-all duration-200"
             style={{
               border: 'none',
+              outline: 'none',
               backgroundColor: 'transparent',
               color: themeConfig.text,
             }}

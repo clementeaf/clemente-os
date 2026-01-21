@@ -14,6 +14,7 @@ function App(): JSX.Element {
     const themeConfig = themes[theme]
     document.body.style.backgroundColor = themeConfig.background
     document.body.style.color = themeConfig.text
+    document.documentElement.style.colorScheme = theme
   }, [theme])
 
   return (

@@ -35,9 +35,19 @@ function LoginForm(): JSX.Element {
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
       <div
-        className="w-full max-w-md bg-transparent border rounded-2xl p-10"
+        className="w-full max-w-md bg-transparent border rounded-2xl p-10 animate-fade-in"
         style={{
           borderColor: themeConfig.border,
+          backgroundColor:
+            theme === 'dark'
+              ? 'rgba(255, 255, 255, 0.02)'
+              : 'rgba(255, 255, 255, 0.6)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          boxShadow:
+            theme === 'dark'
+              ? '0 8px 32px rgba(0, 0, 0, 0.4)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1)',
         }}
       >
         <p
@@ -60,10 +70,19 @@ function LoginForm(): JSX.Element {
               value={name}
               onChange={handleNameChange}
               placeholder="Nombre"
-              className="w-full px-3 py-2 bg-transparent border rounded-md text-sm placeholder:opacity-50 focus:outline-none transition-all duration-200 font-light"
+              className="w-full px-3 py-2 bg-transparent border rounded-md text-sm placeholder:opacity-50 focus:outline-none transition-all duration-200 font-light focus:border-opacity-100"
               style={{
                 borderColor: themeConfig.inputBorder,
                 color: themeConfig.inputText,
+                backgroundColor: themeConfig.inputBackground,
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = themeConfig.accent
+                e.currentTarget.style.boxShadow = `0 0 0 3px ${themeConfig.accent}20`
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = themeConfig.inputBorder
+                e.currentTarget.style.boxShadow = 'none'
               }}
               autoFocus
             />

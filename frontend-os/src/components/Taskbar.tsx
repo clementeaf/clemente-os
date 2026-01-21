@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { useThemeStore } from '../store/themeStore'
 import { useAuthStore } from '../store/authStore'
 import { useWindowStore } from '../store/windowStore'
@@ -54,15 +54,19 @@ function Taskbar(): JSX.Element {
 
   return (
     <>
-      <div
+      <nav
         className="fixed bottom-0 left-0 right-0 h-12 border-t flex items-center px-2 gap-2 z-50"
+        role="navigation"
+        aria-label="Barra de tareas"
         style={{
           borderColor: themeConfig.border,
-          backgroundColor:
+          backgroundColor: themeConfig.taskbarBackground,
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          boxShadow:
             theme === 'dark'
-              ? 'rgba(0, 0, 0, 0.3)'
-              : 'rgba(255, 255, 255, 0.3)',
-          backdropFilter: 'blur(10px)',
+              ? '0 -4px 16px rgba(0, 0, 0, 0.3)'
+              : '0 -4px 16px rgba(0, 0, 0, 0.05)',
         }}
       >
         <div className="relative">
@@ -143,11 +147,11 @@ function Taskbar(): JSX.Element {
         <div
           className="fixed inset-0 z-40"
           onClick={closeStartMenu}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              closeStartMenu()
-            }
-          }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                closeStartMenu()
+              }
+            }}
           role="button"
           tabIndex={0}
           aria-label="Cerrar menú"
@@ -157,5 +161,5 @@ function Taskbar(): JSX.Element {
   )
 }
 
-export default Taskbar
+export default memo(Taskbar)
 

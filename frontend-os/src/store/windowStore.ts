@@ -4,6 +4,8 @@ export interface Window {
   id: string
   title: string
   type: 'file-explorer' | 'app'
+  content?: 'project' | 'about' | 'contact'
+  projectId?: string
   isMinimized: boolean
   isMaximized: boolean
   position: { x: number; y: number }

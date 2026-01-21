@@ -27,13 +27,19 @@ function StartMenu({ onClose, onLogout }: StartMenuProps): JSX.Element {
   return (
     <div
       className="absolute bottom-14 left-2 w-64 border rounded-md p-2"
+      className="animate-slide-in"
       style={{
         borderColor: themeConfig.border,
         backgroundColor:
           theme === 'dark'
-            ? 'rgba(0, 0, 0, 0.8)'
-            : 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(20px)',
+            ? 'rgba(10, 10, 15, 0.9)'
+            : 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        boxShadow:
+          theme === 'dark'
+            ? '0 8px 32px rgba(0, 0, 0, 0.5)'
+            : '0 8px 32px rgba(0, 0, 0, 0.15)',
       }}
       onClick={(e) => e.stopPropagation()}
     >

@@ -54,12 +54,14 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
   /**
    * Inicia el arrastre de la ventana
    */
-  const handleDragStart = (e: React.MouseEvent): void => {
-    if (window.isMaximized) return
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent): void => {
+    if (window.isMaximized || isMobile) return
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
     setIsDragging(true)
     setDragStart({
-      x: e.clientX - window.position.x,
-      y: e.clientY - window.position.y,
+      x: clientX - window.position.x,
+      y: clientY - window.position.y,
     })
     focusWindow(window.id)
   }
@@ -87,22 +89,26 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
   }
 
   /**
-   * Maneja el movimiento del mouse para arrastrar y redimensionar
+   * Maneja el movimiento del mouse/touch para arrastrar y redimensionar
    */
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent): void => {
-      if (isDragging && !window.isMaximized) {
-        const newX = e.clientX - dragStart.x
-        const newY = e.clientY - dragStart.y
+    const handleMouseMove = (e: MouseEvent | TouchEvent): void => {
+      if (isDragging && !window.isMaximized && !isMobile) {
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+        const newX = clientX - dragStart.x
+        const newY = clientY - dragStart.y
         updateWindowPosition(window.id, {
           x: Math.max(0, newX),
           y: Math.max(0, newY),
         })
       }
 
-      if (isResizing && !window.isMaximized) {
-        const deltaX = e.clientX - resizeStart.x
-        const deltaY = e.clientY - resizeStart.y
+      if (isResizing && !window.isMaximized && !isMobile) {
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+        const deltaX = clientX - resizeStart.x
+        const deltaY = clientY - resizeStart.y
         let newWidth = resizeStart.width
         let newHeight = resizeStart.height
         let newX = resizeStart.positionX
@@ -138,10 +144,14 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
 
     if (isDragging || isResizing) {
       document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('touchmove', handleMouseMove, { passive: false })
       document.addEventListener('mouseup', handleMouseUp)
+      document.addEventListener('touchend', handleMouseUp)
       return () => {
         document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('touchmove', handleMouseMove)
         document.removeEventListener('mouseup', handleMouseUp)
+        document.removeEventListener('touchend', handleMouseUp)
       }
     }
   }, [
@@ -153,6 +163,7 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
     window.id,
     window.isMaximized,
     window.position,
+    isMobile,
     updateWindowPosition,
     updateWindowSize,
   ])
@@ -161,39 +172,67 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
     return <></>
   }
 
+  const [isMobile, setIsMobile] = useState<boolean>(false)
+
+  useEffect(() => {
+    const checkMobile = (): void => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => {
+      window.removeEventListener('resize', checkMobile)
+    }
+  }, [])
+
   return (
     <div
       ref={windowRef}
       className="fixed border rounded-md flex flex-col shadow-lg"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`window-title-${window.id}`}
       style={{
-        left: window.isMaximized ? 0 : `${window.position.x}px`,
-        top: window.isMaximized ? 0 : `${window.position.y}px`,
-        width: window.isMaximized ? '100%' : `${window.size.width}px`,
-        height: window.isMaximized ? 'calc(100% - 3rem)' : `${window.size.height}px`,
-        borderColor: themeConfig.border,
-        backgroundColor:
-          theme === 'dark'
-            ? 'rgba(0, 0, 0, 0.7)'
-            : 'rgba(255, 255, 255, 0.7)',
-        backdropFilter: 'blur(20px)',
+        left: window.isMaximized || isMobile ? 0 : `${window.position.x}px`,
+        top: window.isMaximized || isMobile ? 0 : `${window.position.y}px`,
+        width: window.isMaximized || isMobile ? '100%' : `${window.size.width}px`,
+        height: window.isMaximized || isMobile ? 'calc(100% - 3rem)' : `${window.size.height}px`,
+        borderColor: themeConfig.windowBorder,
+        backgroundColor: themeConfig.windowBackground,
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         zIndex: window.zIndex,
         cursor: isDragging ? 'move' : 'default',
+        boxShadow:
+          theme === 'dark'
+            ? '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+            : '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+        transition: isDragging || isResizing ? 'none' : 'all 0.2s ease-out',
       }}
+      className="animate-fade-in"
       onClick={handleFocus}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          closeWindow(window.id)
+        }
+      }}
+      tabIndex={-1}
     >
       <div
         className="flex items-center justify-between px-3 py-2 border-b"
         style={{
-          borderColor: themeConfig.border,
+          borderColor: themeConfig.windowBorder,
           backgroundColor:
             theme === 'dark'
-              ? 'rgba(0, 0, 0, 0.3)'
-              : 'rgba(255, 255, 255, 0.3)',
+              ? 'rgba(255, 255, 255, 0.03)'
+              : 'rgba(0, 0, 0, 0.02)',
           cursor: window.isMaximized ? 'default' : 'move',
         }}
         onMouseDown={handleDragStart}
+        onTouchStart={handleDragStart}
       >
         <span
+          id={`window-title-${window.id}`}
           className="text-xs font-light"
           style={{ color: themeConfig.text }}
         >
@@ -202,7 +241,7 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
         <div className="flex gap-1">
           <button
             onClick={() => minimizeWindow(window.id)}
-            className="w-4 h-4 text-xs font-light transition-all duration-200"
+            className="w-6 h-6 text-xs font-light transition-all duration-200 rounded flex items-center justify-center"
             style={{
               border: 'none',
               outline: 'none',
@@ -215,12 +254,22 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent'
             }}
+            onFocus={(e) => {
+              e.currentTarget.style.backgroundColor = `${themeConfig.border}30`
+              e.currentTarget.style.outline = `2px solid ${themeConfig.accent}`
+              e.currentTarget.style.outlineOffset = '2px'
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.outline = 'none'
+            }}
+            aria-label="Minimizar ventana"
           >
             −
           </button>
           <button
             onClick={() => maximizeWindow(window.id)}
-            className="w-4 h-4 text-xs font-light transition-all duration-200"
+            className="w-6 h-6 text-xs font-light transition-all duration-200 rounded flex items-center justify-center"
             style={{
               border: 'none',
               outline: 'none',
@@ -233,12 +282,22 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent'
             }}
+            onFocus={(e) => {
+              e.currentTarget.style.backgroundColor = `${themeConfig.border}30`
+              e.currentTarget.style.outline = `2px solid ${themeConfig.accent}`
+              e.currentTarget.style.outlineOffset = '2px'
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.outline = 'none'
+            }}
+            aria-label="Maximizar ventana"
           >
             □
           </button>
           <button
             onClick={() => closeWindow(window.id)}
-            className="w-4 h-4 text-xs font-light transition-all duration-200"
+            className="w-6 h-6 text-xs font-light transition-all duration-200 rounded flex items-center justify-center"
             style={{
               border: 'none',
               outline: 'none',
@@ -246,18 +305,28 @@ function WindowComponent({ window, children }: WindowProps): JSX.Element {
               color: themeConfig.text,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = `${themeConfig.border}30`
+              e.currentTarget.style.backgroundColor = '#ef444430'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent'
             }}
+            onFocus={(e) => {
+              e.currentTarget.style.backgroundColor = '#ef444430'
+              e.currentTarget.style.outline = `2px solid ${themeConfig.accent}`
+              e.currentTarget.style.outlineOffset = '2px'
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.outline = 'none'
+            }}
+            aria-label="Cerrar ventana"
           >
             ×
           </button>
         </div>
       </div>
       <div className="flex-1 overflow-hidden relative">{children}</div>
-      {!window.isMaximized && (
+      {!window.isMaximized && !isMobile && (
         <>
           <div
             className="absolute top-0 left-0 w-2 h-2 cursor-nw-resize"
